@@ -1,0 +1,59 @@
+#port setting
+
+server:
+  port: 8082
+
+#Database connection setting
+
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/ordermicroservice
+    username: root
+    password: test
+
+#jpa configuration
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+#The application name is registered with the Eureka client under the specified name
+
+  application:
+    name: ORDER-SERVICE
+
+#centralized configuration
+
+  config:
+    import: configserver:http://localhost:9296
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+# circuit breaker configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      external:
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+
+
+#eureka clint configuration
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: ${EUREKA_SERVICE_ADDRESS:http://localhost:8761/eureka}
